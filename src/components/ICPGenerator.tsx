@@ -196,7 +196,7 @@ export function ICPGenerator() {
 
           {/* Country Selection Section */}
           <section className="mb-10">
-            <label className="section-label">Target Markets / Countries</label>
+            <label className="section-label">Target Countries</label>
             <CountrySelector selectedCountries={formData.selectedCountries} onChange={countries => setFormData(prev => ({
             ...prev,
             selectedCountries: countries
