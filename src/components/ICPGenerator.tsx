@@ -52,16 +52,13 @@ export function ICPGenerator() {
     }
     return formatted;
   }, []);
-
   const isValidUrl = useCallback((url: string): boolean => {
     const formatted = formatUrl(url);
     // Check for valid domain extension (e.g., .com, .org, .net, .io, .co, etc.)
     const domainExtensionRegex = /^https?:\/\/[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+/i;
     return domainExtensionRegex.test(formatted);
   }, [formatUrl]);
-
   const [urlError, setUrlError] = useState<string | null>(null);
-
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
@@ -69,7 +66,6 @@ export function ICPGenerator() {
     }));
     setUrlError(null);
   };
-
   const handleUrlBlur = () => {
     if (formData.companyUrl) {
       const formatted = formatUrl(formData.companyUrl);
@@ -77,7 +73,6 @@ export function ICPGenerator() {
         ...prev,
         companyUrl: formatted
       }));
-      
       if (!isValidUrl(formatted)) {
         setUrlError("Please enter a valid URL with a domain extension (e.g., .com, .org, .net)");
       } else {
@@ -85,7 +80,6 @@ export function ICPGenerator() {
       }
     }
   };
-
   const handleGenerateWithAI = async () => {
     if (!formData.companyUrl) {
       toast({
@@ -95,7 +89,6 @@ export function ICPGenerator() {
       });
       return;
     }
-    
     if (!isValidUrl(formData.companyUrl)) {
       toast({
         title: "Invalid URL",
@@ -184,9 +177,7 @@ export function ICPGenerator() {
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1 relative">
                 <input type="text" value={formData.companyUrl} onChange={handleUrlChange} onBlur={handleUrlBlur} placeholder="e.g., https://example.com or example.com" className={cn("w-full px-4 py-3 rounded-lg border bg-card text-foreground input-focus-ring placeholder:text-muted-foreground", urlError ? "border-destructive" : "border-input")} />
-                {urlError && (
-                  <p className="text-destructive text-sm mt-1">{urlError}</p>
-                )}
+                {urlError && <p className="text-destructive text-sm mt-1">{urlError}</p>}
               </div>
               <button onClick={handleGenerateWithAI} disabled={isGeneratingAI || !formData.companyUrl} className="btn-ai whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed">
                 {isGeneratingAI ? <>
@@ -198,9 +189,7 @@ export function ICPGenerator() {
                   </>}
               </button>
             </div>
-            <p className="section-hint">
-              Enter a company URL to auto-generate their profile using AI analysis
-            </p>
+            <p className="section-hint">Enter a company URL to auto-generate ideal customer profile using AI analysis</p>
           </section>
 
           {/* Divider */}
