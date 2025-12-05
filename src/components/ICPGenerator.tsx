@@ -219,10 +219,7 @@ export function ICPGenerator() {
             </button>
 
             {/* Example Data Link */}
-            <button onClick={loadExample} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-              <Lightbulb className="w-4 h-4" />
-              Load example data to try it out
-            </button>
+            
           </div>
         </div>
 
