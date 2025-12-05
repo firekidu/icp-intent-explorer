@@ -52,20 +52,40 @@ export function ICPGenerator() {
     }
     return formatted;
   }, []);
+
+  const isValidUrl = useCallback((url: string): boolean => {
+    const formatted = formatUrl(url);
+    // Check for valid domain extension (e.g., .com, .org, .net, .io, .co, etc.)
+    const domainExtensionRegex = /^https?:\/\/[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+/i;
+    return domainExtensionRegex.test(formatted);
+  }, [formatUrl]);
+
+  const [urlError, setUrlError] = useState<string | null>(null);
+
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
       companyUrl: e.target.value
     }));
+    setUrlError(null);
   };
+
   const handleUrlBlur = () => {
     if (formData.companyUrl) {
+      const formatted = formatUrl(formData.companyUrl);
       setFormData(prev => ({
         ...prev,
-        companyUrl: formatUrl(prev.companyUrl)
+        companyUrl: formatted
       }));
+      
+      if (!isValidUrl(formatted)) {
+        setUrlError("Please enter a valid URL with a domain extension (e.g., .com, .org, .net)");
+      } else {
+        setUrlError(null);
+      }
     }
   };
+
   const handleGenerateWithAI = async () => {
     if (!formData.companyUrl) {
       toast({
@@ -73,6 +93,16 @@ export function ICPGenerator() {
         description: "Please enter a company website to generate profile with AI.",
         variant: "destructive"
       });
+      return;
+    }
+    
+    if (!isValidUrl(formData.companyUrl)) {
+      toast({
+        title: "Invalid URL",
+        description: "Web URL is incomplete. Please include a valid domain extension (e.g., .com, .org, .net).",
+        variant: "destructive"
+      });
+      setUrlError("Please enter a valid URL with a domain extension (e.g., .com, .org, .net)");
       return;
     }
     setIsGeneratingAI(true);
@@ -153,7 +183,10 @@ export function ICPGenerator() {
             
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1 relative">
-                <input type="text" value={formData.companyUrl} onChange={handleUrlChange} onBlur={handleUrlBlur} placeholder="e.g., https://example.com or example.com" className="w-full px-4 py-3 rounded-lg border border-input bg-card text-foreground input-focus-ring placeholder:text-muted-foreground" />
+                <input type="text" value={formData.companyUrl} onChange={handleUrlChange} onBlur={handleUrlBlur} placeholder="e.g., https://example.com or example.com" className={cn("w-full px-4 py-3 rounded-lg border bg-card text-foreground input-focus-ring placeholder:text-muted-foreground", urlError ? "border-destructive" : "border-input")} />
+                {urlError && (
+                  <p className="text-destructive text-sm mt-1">{urlError}</p>
+                )}
               </div>
               <button onClick={handleGenerateWithAI} disabled={isGeneratingAI || !formData.companyUrl} className="btn-ai whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed">
                 {isGeneratingAI ? <>
