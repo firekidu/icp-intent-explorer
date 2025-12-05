@@ -4,30 +4,26 @@ import { CountrySelector } from "./CountrySelector";
 import { CharacterCountTextarea } from "./CharacterCountTextarea";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-
 const STORAGE_KEY = "icp-generator-draft";
-
 interface FormData {
   companyUrl: string;
   productDetails: string;
   selectedCountries: string[];
 }
-
 const defaultFormData: FormData = {
   companyUrl: "",
   productDetails: "",
-  selectedCountries: [],
+  selectedCountries: []
 };
-
 const exampleData: FormData = {
   companyUrl: "https://slack.com",
-  productDetails:
-    "Enterprise team collaboration platform featuring real-time messaging, file sharing, and integrations with 2,500+ business tools. Key benefits include reduced email overload, streamlined workflows, and centralized team communication. Ideal for remote and hybrid teams seeking improved productivity and collaboration.",
-  selectedCountries: ["US", "GB", "DE", "CA", "AU"],
+  productDetails: "Enterprise team collaboration platform featuring real-time messaging, file sharing, and integrations with 2,500+ business tools. Key benefits include reduced email overload, streamlined workflows, and centralized team communication. Ideal for remote and hybrid teams seeking improved productivity and collaboration.",
+  selectedCountries: ["US", "GB", "DE", "CA", "AU"]
 };
-
 export function ICPGenerator() {
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [formData, setFormData] = useState<FormData>(defaultFormData);
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [isGeneratingICP, setIsGeneratingICP] = useState(false);
@@ -49,7 +45,6 @@ export function ICPGenerator() {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
   }, [formData]);
-
   const formatUrl = useCallback((url: string): string => {
     let formatted = url.trim();
     if (formatted && !formatted.match(/^https?:\/\//i)) {
@@ -57,92 +52,79 @@ export function ICPGenerator() {
     }
     return formatted;
   }, []);
-
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, companyUrl: e.target.value }));
+    setFormData(prev => ({
+      ...prev,
+      companyUrl: e.target.value
+    }));
   };
-
   const handleUrlBlur = () => {
     if (formData.companyUrl) {
-      setFormData((prev) => ({ ...prev, companyUrl: formatUrl(prev.companyUrl) }));
+      setFormData(prev => ({
+        ...prev,
+        companyUrl: formatUrl(prev.companyUrl)
+      }));
     }
   };
-
   const handleGenerateWithAI = async () => {
     if (!formData.companyUrl) {
       toast({
         title: "URL Required",
         description: "Please enter a company website to generate profile with AI.",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     setIsGeneratingAI(true);
-    
+
     // Simulate AI generation (replace with actual API call)
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    
+    await new Promise(resolve => setTimeout(resolve, 2000));
     toast({
       title: "AI Analysis Complete",
-      description: "Company profile has been generated. Review and customize as needed.",
+      description: "Company profile has been generated. Review and customize as needed."
     });
-    
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
-      productDetails:
-        "AI-generated analysis: This company offers innovative solutions in their industry segment. Key products include enterprise software solutions with focus on scalability and user experience. Primary benefits include cost reduction, improved efficiency, and enhanced team collaboration.",
+      productDetails: "AI-generated analysis: This company offers innovative solutions in their industry segment. Key products include enterprise software solutions with focus on scalability and user experience. Primary benefits include cost reduction, improved efficiency, and enhanced team collaboration."
     }));
-    
     setIsGeneratingAI(false);
   };
-
   const handleGenerateICP = async () => {
     if (!formData.productDetails && !formData.companyUrl) {
       toast({
         title: "Information Required",
         description: "Please enter a company URL or describe your target products/services.",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     if (formData.selectedCountries.length === 0) {
       toast({
         title: "Markets Required",
         description: "Please select at least one target market.",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     setIsGeneratingICP(true);
-    
+
     // Simulate ICP generation (replace with actual API call)
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    
+    await new Promise(resolve => setTimeout(resolve, 3000));
     toast({
       title: "ICP Generated Successfully!",
-      description: "Your Ideal Customer Profile with intent data insights is ready.",
+      description: "Your Ideal Customer Profile with intent data insights is ready."
     });
-    
     setIsGeneratingICP(false);
   };
-
   const loadExample = () => {
     setFormData(exampleData);
     toast({
       title: "Example Loaded",
-      description: "Sample data has been loaded. Feel free to modify it.",
+      description: "Sample data has been loaded. Feel free to modify it."
     });
   };
-
-  const canGenerate =
-    (formData.companyUrl || formData.productDetails) &&
-    formData.selectedCountries.length > 0;
-
-  return (
-    <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8">
+  const canGenerate = (formData.companyUrl || formData.productDetails) && formData.selectedCountries.length > 0;
+  return <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <header className="text-center mb-10 animate-fade-in">
@@ -159,41 +141,28 @@ export function ICPGenerator() {
         </header>
 
         {/* Main Form Card */}
-        <div className="card-elevated p-6 sm:p-8 animate-fade-in" style={{ animationDelay: "100ms" }}>
+        <div className="card-elevated p-6 sm:p-8 animate-fade-in" style={{
+        animationDelay: "100ms"
+      }}>
           {/* Company URL Section */}
           <section className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <Globe className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-semibold text-foreground">Target Company Website</h2>
+              <h2 className="text-lg font-semibold text-foreground">Your Company Website</h2>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1 relative">
-                <input
-                  type="text"
-                  value={formData.companyUrl}
-                  onChange={handleUrlChange}
-                  onBlur={handleUrlBlur}
-                  placeholder="e.g., https://example.com or example.com"
-                  className="w-full px-4 py-3 rounded-lg border border-input bg-card text-foreground input-focus-ring placeholder:text-muted-foreground"
-                />
+                <input type="text" value={formData.companyUrl} onChange={handleUrlChange} onBlur={handleUrlBlur} placeholder="e.g., https://example.com or example.com" className="w-full px-4 py-3 rounded-lg border border-input bg-card text-foreground input-focus-ring placeholder:text-muted-foreground" />
               </div>
-              <button
-                onClick={handleGenerateWithAI}
-                disabled={isGeneratingAI || !formData.companyUrl}
-                className="btn-ai whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isGeneratingAI ? (
-                  <>
+              <button onClick={handleGenerateWithAI} disabled={isGeneratingAI || !formData.companyUrl} className="btn-ai whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed">
+                {isGeneratingAI ? <>
                     <Loader2 className="w-4 h-4 animate-spin" />
                     Analyzing...
-                  </>
-                ) : (
-                  <>
+                  </> : <>
                     <Sparkles className="w-4 h-4" />
                     Generate with AI
-                  </>
-                )}
+                  </>}
               </button>
             </div>
             <p className="section-hint">
@@ -218,13 +187,10 @@ export function ICPGenerator() {
             <label className="section-label">
               Products, Services, Key Features & Benefits
             </label>
-            <CharacterCountTextarea
-              value={formData.productDetails}
-              onChange={(value) => setFormData((prev) => ({ ...prev, productDetails: value }))}
-              maxLength={2000}
-              placeholder="Describe the products/services you want to target, their key features, unique benefits, and use cases..."
-              rows={5}
-            />
+            <CharacterCountTextarea value={formData.productDetails} onChange={value => setFormData(prev => ({
+            ...prev,
+            productDetails: value
+          }))} maxLength={2000} placeholder="Describe the products/services you want to target, their key features, unique benefits, and use cases..." rows={5} />
             <p className="section-hint">
               Be specific about the value propositions and pain points you're addressing
             </p>
@@ -233,12 +199,10 @@ export function ICPGenerator() {
           {/* Country Selection Section */}
           <section className="mb-10">
             <label className="section-label">Target Markets / Countries</label>
-            <CountrySelector
-              selectedCountries={formData.selectedCountries}
-              onChange={(countries) =>
-                setFormData((prev) => ({ ...prev, selectedCountries: countries }))
-              }
-            />
+            <CountrySelector selectedCountries={formData.selectedCountries} onChange={countries => setFormData(prev => ({
+            ...prev,
+            selectedCountries: countries
+          }))} />
             <p className="section-hint">
               Select the geographic markets you want to focus on for your ICP analysis
             </p>
@@ -246,29 +210,18 @@ export function ICPGenerator() {
 
           {/* Generate Button */}
           <div className="flex flex-col items-center gap-4">
-            <button
-              onClick={handleGenerateICP}
-              disabled={!canGenerate || isGeneratingICP}
-              className="btn-generate w-full sm:w-auto"
-            >
-              {isGeneratingICP ? (
-                <>
+            <button onClick={handleGenerateICP} disabled={!canGenerate || isGeneratingICP} className="btn-generate w-full sm:w-auto">
+              {isGeneratingICP ? <>
                   <Loader2 className="w-5 h-5 animate-spin" />
                   Generating ICP & Insights...
-                </>
-              ) : (
-                <>
+                </> : <>
                   Generate ICP & Intent Insights
                   <ArrowRight className="w-5 h-5" />
-                </>
-              )}
+                </>}
             </button>
 
             {/* Example Data Link */}
-            <button
-              onClick={loadExample}
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
+            <button onClick={loadExample} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
               <Lightbulb className="w-4 h-4" />
               Load example data to try it out
             </button>
@@ -276,12 +229,13 @@ export function ICPGenerator() {
         </div>
 
         {/* Footer Info */}
-        <footer className="mt-8 text-center text-sm text-muted-foreground animate-fade-in" style={{ animationDelay: "200ms" }}>
+        <footer className="mt-8 text-center text-sm text-muted-foreground animate-fade-in" style={{
+        animationDelay: "200ms"
+      }}>
           <p>
             Your data is processed securely. Draft inputs are saved locally for your convenience.
           </p>
         </footer>
       </div>
-    </div>
-  );
+    </div>;
 }
