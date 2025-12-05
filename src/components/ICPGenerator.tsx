@@ -184,9 +184,7 @@ export function ICPGenerator() {
 
           {/* Product Details Section */}
           <section className="mb-8">
-            <label className="section-label">
-              Products, Services, Key Features & Benefits
-            </label>
+            <label className="section-label">Your Products, Services, Key Features & Benefits</label>
             <CharacterCountTextarea value={formData.productDetails} onChange={value => setFormData(prev => ({
             ...prev,
             productDetails: value
