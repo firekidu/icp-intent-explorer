@@ -101,38 +101,33 @@ export function ICPGenerator() {
     setIsGeneratingAI(true);
 
     try {
-      const response = await fetch("https://n8n.inferagenix.com/webhook/fe2907ad-63c1-4ada-a97e-d9b4c2d28451", {
+      await fetch("https://n8n.inferagenix.com/webhook-test/fe2907ad-63c1-4ada-a97e-d9b4c2d28451", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        mode: "no-cors",
         body: JSON.stringify({
           companyUrl: formData.companyUrl,
           timestamp: new Date().toISOString(),
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Webhook request failed");
-      }
-
-      const data = await response.json();
-      
+      // With no-cors mode, we can't read the response but the request is sent
       toast({
-        title: "AI Analysis Complete",
-        description: "Company profile has been generated. Review and customize as needed."
+        title: "Request Sent",
+        description: "The request was sent to n8n. Check your workflow history to confirm it was triggered."
       });
       
-      // Use response data if available, otherwise use a default message
       setFormData(prev => ({
         ...prev,
-        productDetails: data?.productDetails || data?.message || `AI-generated analysis for ${formData.companyUrl}: Company profile generated successfully.`
+        productDetails: `AI analysis request sent for ${formData.companyUrl}. Awaiting n8n workflow processing.`
       }));
     } catch (error) {
       console.error("Webhook error:", error);
       toast({
         title: "Generation Failed",
-        description: "Failed to generate AI profile. Please try again.",
+        description: "Failed to send request. Please check the webhook URL and try again.",
         variant: "destructive"
       });
     } finally {
