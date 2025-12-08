@@ -101,27 +101,34 @@ export function ICPGenerator() {
     setIsGeneratingAI(true);
 
     try {
-      await fetch("https://n8n.inferagenix.com/webhook-test/fe2907ad-63c1-4ada-a97e-d9b4c2d28451", {
+      const response = await fetch("https://n8n.inferagenix.com/webhook-test/dc3b0724-4731-43f4-a51e-4c14d7d3a37b", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        mode: "no-cors",
         body: JSON.stringify({
           companyUrl: formData.companyUrl,
           timestamp: new Date().toISOString(),
         }),
       });
 
-      // With no-cors mode, we can't read the response but the request is sent
+      if (!response.ok) {
+        throw new Error("Webhook request failed");
+      }
+
+      const data = await response.json();
+      
+      // Extract the product details from the response
+      const productDetails = data?.productDetails || data?.output || data?.message || data?.text || (typeof data === 'string' ? data : JSON.stringify(data));
+      
       toast({
-        title: "Request Sent",
-        description: "The request was sent to n8n. Check your workflow history to confirm it was triggered."
+        title: "AI Analysis Complete",
+        description: "Company profile has been generated. Review and customize as needed."
       });
       
       setFormData(prev => ({
         ...prev,
-        productDetails: `AI analysis request sent for ${formData.companyUrl}. Awaiting n8n workflow processing.`
+        productDetails: productDetails
       }));
     } catch (error) {
       console.error("Webhook error:", error);
