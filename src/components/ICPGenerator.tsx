@@ -101,7 +101,7 @@ export function ICPGenerator() {
     setIsGeneratingAI(true);
 
     try {
-      const response = await fetch("https://n8n.inferagenix.com/webhook/a566c3ff-782d-44de-9e52-e9972cb027e4", {
+      const response = await fetch("https://n8n.inferagenix.com/webhook/fe2907ad-63c1-4ada-a97e-d9b4c2d28451", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
