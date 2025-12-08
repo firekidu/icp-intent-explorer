@@ -100,17 +100,44 @@ export function ICPGenerator() {
     }
     setIsGeneratingAI(true);
 
-    // Simulate AI generation (replace with actual API call)
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    toast({
-      title: "AI Analysis Complete",
-      description: "Company profile has been generated. Review and customize as needed."
-    });
-    setFormData(prev => ({
-      ...prev,
-      productDetails: "AI-generated analysis: This company offers innovative solutions in their industry segment. Key products include enterprise software solutions with focus on scalability and user experience. Primary benefits include cost reduction, improved efficiency, and enhanced team collaboration."
-    }));
-    setIsGeneratingAI(false);
+    try {
+      const response = await fetch("https://n8n.inferagenix.com/webhook/a566c3ff-782d-44de-9e52-e9972cb027e4", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          companyUrl: formData.companyUrl,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Webhook request failed");
+      }
+
+      const data = await response.json();
+      
+      toast({
+        title: "AI Analysis Complete",
+        description: "Company profile has been generated. Review and customize as needed."
+      });
+      
+      // Use response data if available, otherwise use a default message
+      setFormData(prev => ({
+        ...prev,
+        productDetails: data?.productDetails || data?.message || `AI-generated analysis for ${formData.companyUrl}: Company profile generated successfully.`
+      }));
+    } catch (error) {
+      console.error("Webhook error:", error);
+      toast({
+        title: "Generation Failed",
+        description: "Failed to generate AI profile. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGeneratingAI(false);
+    }
   };
   const handleGenerateICP = async () => {
     if (!formData.productDetails && !formData.companyUrl) {
